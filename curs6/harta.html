@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Moving Marker - București</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/Leaflet-MovingMaker@0.0.1/MovingMarker.js"></script>
+
+    <style>
+        #map {
+            height: 500px;
+        }
+
+        .custom-icon i {
+            font-size: 24px;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="start">Start</button>
+    <div id="map"></div>
+
+    <script>
+
+        let type;
+        let curIndex = 0;
+        let isMoving = false;
+        const MOVE_TIME = 800;
+        // Inițializează harta centrată în București (zona Universitate)
+        const map = L.map('map').setView([44.43825371823474, 26.092185974121097], 15);
+
+        // Adaugă un tile layer de la OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap Link-Academy'
+        }).addTo(map);
+
+        // Definirea traseului între Universitate și Piața Romană
+        const points = [
+            [44.435480570705934, 26.102421283721924],  // Universitate
+            [44.434423369319695, 26.084332466125492],  // Intersecția Magheru
+            [44.44288810471768, 26.081038713455204],  // Intersecția Magheru
+            [44.44680215139495, 26.096692085266117]   // Piața Romană
+        ];
+
+        // Creează o linie care marchează traseul
+        L.polyline(points, { color: 'blue', weight: 4 }).addTo(map);
+
+        // Definește icon-ul personalizat
+        // const myIcon = L.icon({
+        //     iconUrl: 'taxi.png',
+        //     iconSize: [38, 38], // dimensiunea iconiței
+        //     iconAnchor: [19, 38] // punctul de ancorare (centrul jos)
+        // });
+        const myIcon = L.divIcon({
+
+            html: '<i class="fas fa-car"></i>',
+            iconSize: [38, 38], // dimensiunea iconiței
+            iconAnchor: [19, 20], // punctul de ancorare (centrul jos)
+            className: 'custom-icon',
+        });
+        const myMovingMarker = L.Marker.movingMarker(points, 4000, {
+            icon: myIcon,
+
+        }).addTo(map).on('end', () => {
+            console.log('reach end');
+
+        }).bindPopup('Ajung cat pot de repde.');
+
+
+        var latlngs = [
+            [44.42902981241271, 26.103687286376957],
+            [44.43347340393398, 26.084032058715824],
+            [44.44272724787427, 26.080942153930668],
+            [44.45197962625225, 26.085019111633304],
+            [44.452653583300815, 26.104974746704105],
+            [44.43776344758579, 26.114501953125004],
+            [44.42902981241271, 26.103687286376957]
+
+        ];
+
+        var polygon = L.polygon(latlngs, { color: 'red' }).addTo(map);
+
+        map.fitBounds(polygon.getBounds());
+
+        let $btn = $('#start');
+
+        $btn.on('click', () => {
+
+            myMovingMarker.start();
+
+        });
+
+
+    </script>
+</body>
+
+</html>
